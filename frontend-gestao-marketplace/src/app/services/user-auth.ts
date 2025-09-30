@@ -11,4 +11,8 @@ export class UserAuthService {
   setUserToken(token: string) {
     localStorage.setItem('token', token);
   }
+
+  clearUserToken() {
+    localStorage.removeItem('token');
+  }
 }
