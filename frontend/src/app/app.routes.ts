@@ -14,6 +14,11 @@ export const routes: Routes = [
     },
     {
         path: '',
+        redirectTo: '/login',
+        pathMatch: 'full'
+    },
+    {
+        path: '',
         component: Layout,
         canActivateChild: [authGuard],
         children: [
@@ -26,11 +31,6 @@ export const routes: Routes = [
                 component: NewProduct
             }
         ]
-    },
-    {
-        path: '',
-        redirectTo: '/login',
-        pathMatch: 'full'
     },
     {
         path: '**',
