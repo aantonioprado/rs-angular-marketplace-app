@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ProductsService } from '../../services/products';
+import { INewProductRequest } from '../../interfaces/new-product-request';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-new-product',
@@ -9,6 +12,8 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 })
 export class NewProduct {
   productImageBase64 = '';
+  successMessage = '';
+
   productForm = new FormGroup({
     title: new FormControl('', [Validators.required]),
     price: new FormControl(0, [Validators.required]),
@@ -16,7 +21,25 @@ export class NewProduct {
     category: new FormControl('', [Validators.required]),
   });
 
-  saveProduct() {}
+  private readonly _productsService = inject(ProductsService);
+
+  saveProduct() {
+    if(this.productForm.invalid || !this.productImageBase64) return;
+
+    const newProduct: INewProductRequest = {
+      title: this.productForm.value.title as string,
+      description: this.productForm.value.description as string,
+      price: this.productForm.value.price as number,
+      category: this.productForm.value.category as string,
+      imageBase64: this.productImageBase64,
+    }
+    
+    this._productsService.saveProduct(newProduct).pipe(take(1)).subscribe({
+      next: (response) => {
+        this.successMessage = response.message;
+      }
+    });
+  }
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
